@@ -12,6 +12,7 @@ Copyright (c) 2025-2026 LoopKit Authors. All rights reserved.
 import hashlib
 import re
 import subprocess
+from typing import Optional
 import sys
 
 
@@ -256,7 +257,7 @@ def find_groups_by_hierarchy(content: str) -> dict[str, str]:
     return result
 
 
-def find_main_sources_phase(content: str) -> str | None:
+def find_main_sources_phase(content: str) -> Optional[str]:
     """Find the PBXSourcesBuildPhase UUID for the main app target (Loop)."""
     target_section = re.search(
         r'/\* Begin PBXNativeTarget section \*/\n(.*?)\n/\* End PBXNativeTarget section \*/',
@@ -281,7 +282,7 @@ def find_main_sources_phase(content: str) -> str | None:
     return None
 
 
-def find_test_sources_phase(content: str) -> str | None:
+def find_test_sources_phase(content: str) -> Optional[str]:
     """Find the PBXSourcesBuildPhase UUID for the LoopTests target."""
     target_section = re.search(
         r'/\* Begin PBXNativeTarget section \*/\n(.*?)\n/\* End PBXNativeTarget section \*/',
