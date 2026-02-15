@@ -304,6 +304,11 @@ setup_source_remote() {
     git fetch "$FEATURE_REMOTE" "$FEATURE_LOOP_BRANCH" --depth=1
     success "Fetched ${FEATURE_LOOP_BRANCH} from ${FEATURE_REPO}"
 
+    # Also fetch dev — our feature branch was based on dev, so we need it as the diff base
+    # even when the user cloned main (which is the L&L-compatible path)
+    git fetch "$FEATURE_REMOTE" dev --depth=1
+    success "Fetched dev ref for diff base"
+
     popd > /dev/null
 }
 
@@ -328,12 +333,18 @@ install_new_files() {
 
     # Localizable.xcstrings: direct checkout instead of 3-way merge
     # (71K-line JSON file — too large for reliable diff/apply)
-    if git checkout "${FEATURE_REMOTE}/${FEATURE_LOOP_BRANCH}" -- "Loop/Localizable.xcstrings" 2>/dev/null; then
-        ((installed++))
-        success "Replaced Localizable.xcstrings (direct checkout)"
+    # Only replace if the user already has it (dev branch uses xcstrings;
+    # main branch uses old-style .strings files and doesn't have xcstrings)
+    if [[ -f "Loop/Localizable.xcstrings" ]]; then
+        if git checkout "${FEATURE_REMOTE}/${FEATURE_LOOP_BRANCH}" -- "Loop/Localizable.xcstrings" 2>/dev/null; then
+            ((installed++))
+            success "Replaced Localizable.xcstrings (direct checkout)"
+        else
+            warn "Failed to checkout Localizable.xcstrings"
+            ((failed++))
+        fi
     else
-        warn "Failed to checkout Localizable.xcstrings"
-        ((failed++))
+        info "Skipping Localizable.xcstrings (not present on this branch — features use NSLocalizedString fallback)"
     fi
 
     popd > /dev/null
@@ -351,13 +362,18 @@ patch_modified_files() {
 
     pushd Loop > /dev/null
 
-    # We need to find the merge base. The dev branch tracks upstream Loop.
-    # We generate a diff from the dev branch tip to our feature branch for each file,
-    # then apply it with --3way so git can handle any L&L modifications.
+    # We need the dev branch as the diff base. feat/AllFeatures was branched from dev,
+    # so `git diff dev..feat/AllFeatures` isolates ONLY our feature changes.
+    # We fetched dev from our remote in Phase 3, so it's always available —
+    # even when the user cloned main (the L&L-compatible path).
     local dev_ref
-    dev_ref=$(git rev-parse dev 2>/dev/null || git rev-parse origin/dev 2>/dev/null || git rev-parse upstream/dev 2>/dev/null)
+    dev_ref=$(git rev-parse "${FEATURE_REMOTE}/dev" 2>/dev/null)
     if [[ -z "$dev_ref" ]]; then
-        die "Cannot find dev branch reference. Make sure 'dev' branch exists."
+        # Fallback to local dev branches
+        dev_ref=$(git rev-parse dev 2>/dev/null || git rev-parse origin/dev 2>/dev/null || git rev-parse upstream/dev 2>/dev/null)
+    fi
+    if [[ -z "$dev_ref" ]]; then
+        die "Cannot find dev branch reference. The feature remote fetch may have failed."
     fi
 
     local patched=0
