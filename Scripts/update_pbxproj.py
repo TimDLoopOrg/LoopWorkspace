@@ -96,6 +96,7 @@ SOURCE_FILES = [
     ("Services/LoopInsights/LoopInsights_AIServiceAdapter.swift",   "LoopInsights_AIServiceAdapter.swift",   "Services/LoopInsights"),
     ("Services/LoopInsights/LoopInsights_AlcoholTracker.swift",     "LoopInsights_AlcoholTracker.swift",     "Services/LoopInsights"),
     ("Services/LoopInsights/LoopInsights_CaffeineTracker.swift",    "LoopInsights_CaffeineTracker.swift",    "Services/LoopInsights"),
+    ("Services/LoopInsights/LoopInsights_VoiceService.swift",       "LoopInsights_VoiceService.swift",       "Services/LoopInsights"),
     ("Services/LoopInsights/LoopInsights_DataAggregator.swift",     "LoopInsights_DataAggregator.swift",     "Services/LoopInsights"),
     ("Services/LoopInsights/LoopInsights_FoodResponseAnalyzer.swift", "LoopInsights_FoodResponseAnalyzer.swift", "Services/LoopInsights"),
     ("Services/LoopInsights/LoopInsights_GoalStore.swift",          "LoopInsights_GoalStore.swift",          "Services/LoopInsights"),
