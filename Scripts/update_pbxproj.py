@@ -106,10 +106,13 @@ SOURCE_FILES = [
     ("Services/LoopInsights/LoopInsights_SecureStorage.swift",      "LoopInsights_SecureStorage.swift",      "Services/LoopInsights"),
     ("Services/LoopInsights/LoopInsights_SuggestionStore.swift",    "LoopInsights_SuggestionStore.swift",    "Services/LoopInsights"),
     ("Services/LoopInsights/LoopInsights_TestDataProvider.swift",   "LoopInsights_TestDataProvider.swift",   "Services/LoopInsights"),
+    ("Services/LoopInsights/LoopInsights_MealDebriefService.swift",  "LoopInsights_MealDebriefService.swift",  "Services/LoopInsights"),
+    ("Services/LoopInsights/LoopInsights_PreMealAdvisorService.swift", "LoopInsights_PreMealAdvisorService.swift", "Services/LoopInsights"),
 
     # ── LoopInsights — View Models ──
     ("View Models/LoopInsights/LoopInsights_ChatViewModel.swift",      "LoopInsights_ChatViewModel.swift",      "View Models/LoopInsights"),
     ("View Models/LoopInsights/LoopInsights_DashboardViewModel.swift", "LoopInsights_DashboardViewModel.swift", "View Models/LoopInsights"),
+    ("View Models/LoopInsights/LoopInsights_MealInsightsViewModel.swift", "LoopInsights_MealInsightsViewModel.swift", "View Models/LoopInsights"),
 
     # ── LoopInsights — Views ──
     ("Views/LoopInsights/LoopInsights_AGPChartView.swift",         "LoopInsights_AGPChartView.swift",         "Views/LoopInsights"),
@@ -124,6 +127,11 @@ SOURCE_FILES = [
     ("Views/LoopInsights/LoopInsights_SuggestionDetailView.swift", "LoopInsights_SuggestionDetailView.swift", "Views/LoopInsights"),
     ("Views/LoopInsights/LoopInsights_SuggestionHistoryView.swift", "LoopInsights_SuggestionHistoryView.swift", "Views/LoopInsights"),
     ("Views/LoopInsights/LoopInsights_TrendsInsightsView.swift",   "LoopInsights_TrendsInsightsView.swift",   "Views/LoopInsights"),
+    ("Views/LoopInsights/LoopInsights_MealDebriefCard.swift",     "LoopInsights_MealDebriefCard.swift",     "Views/LoopInsights"),
+    ("Views/LoopInsights/LoopInsights_PreMealAdvisorCard.swift",  "LoopInsights_PreMealAdvisorCard.swift",  "Views/LoopInsights"),
+
+    # ── LoopInsights — Models ──
+    ("Models/LoopInsights/LoopInsights_MealDebriefModels.swift",  "LoopInsights_MealDebriefModels.swift",  "Models/LoopInsights"),
 ]
 
 TEST_FILES = [

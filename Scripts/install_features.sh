@@ -102,6 +102,8 @@ NEW_FILES=(
     "Loop/Services/LoopInsights/LoopInsights_SecureStorage.swift"
     "Loop/Services/LoopInsights/LoopInsights_SuggestionStore.swift"
     "Loop/Services/LoopInsights/LoopInsights_TestDataProvider.swift"
+    "Loop/Services/LoopInsights/LoopInsights_MealDebriefService.swift"
+    "Loop/Services/LoopInsights/LoopInsights_PreMealAdvisorService.swift"
 
     # FoodFinder — View Models
     "Loop/View Models/FoodFinder/FoodFinder_SearchViewModel.swift"
@@ -109,6 +111,7 @@ NEW_FILES=(
     # LoopInsights — View Models
     "Loop/View Models/LoopInsights/LoopInsights_ChatViewModel.swift"
     "Loop/View Models/LoopInsights/LoopInsights_DashboardViewModel.swift"
+    "Loop/View Models/LoopInsights/LoopInsights_MealInsightsViewModel.swift"
 
     # AutoPresets — Views
     "Loop/Views/AutoPresets/AutoPresets_SettingsView.swift"
@@ -139,6 +142,11 @@ NEW_FILES=(
     "Loop/Views/LoopInsights/LoopInsights_SuggestionDetailView.swift"
     "Loop/Views/LoopInsights/LoopInsights_SuggestionHistoryView.swift"
     "Loop/Views/LoopInsights/LoopInsights_TrendsInsightsView.swift"
+    "Loop/Views/LoopInsights/LoopInsights_MealDebriefCard.swift"
+    "Loop/Views/LoopInsights/LoopInsights_PreMealAdvisorCard.swift"
+
+    # LoopInsights — Models
+    "Loop/Models/LoopInsights/LoopInsights_MealDebriefModels.swift"
 
     # FoodFinder — Tests
     "LoopTests/FoodFinder/FoodFinder_BarcodeScannerTests.swift"
