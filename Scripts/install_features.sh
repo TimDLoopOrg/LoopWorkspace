@@ -446,10 +446,6 @@ lines = content.split("\n")
 # inserts before the ForEach — so Profiles ends up BELOW our features.
 
 FEATURE_ROWS = """
-            foodFinderSettingsRow
-
-            loopInsightsSection
-
             NavigationLink(destination: AutoPresets_SettingsView()) {
                 LargeButton(
                     action: {},
@@ -459,6 +455,10 @@ FEATURE_ROWS = """
                     descriptiveText: NSLocalizedString("Automate your presets during motion", comment: "Descriptive text for Auto-Apply Presets")
                 )
             }
+
+            foodFinderSettingsRow
+
+            loopInsightsSection
 """
 
 anchor1 = 'Diabetes Treatment'
@@ -496,16 +496,18 @@ COMPUTED_PROPS = """
     }
 
     private var loopInsightsSection: some View {
-        NavigationLink(destination: LoopInsights_SettingsView(dataStoresProvider: viewModel.loopInsightsDataStores)) {
-            LargeButton(action: {},
-                        includeArrow: false,
-                        imageView: Image(systemName: "brain.head.profile")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .foregroundColor(Color(red: 26/255, green: 138/255, blue: 158/255))
-                            .frame(width: 30),
-                        label: NSLocalizedString("LoopInsights", comment: "LoopInsights settings button"),
-                        descriptiveText: NSLocalizedString("AI-powered therapy settings analysis", comment: "LoopInsights settings descriptive text"))
+        Section {
+            NavigationLink(destination: LoopInsights_SettingsView(dataStoresProvider: viewModel.loopInsightsDataStores)) {
+                LargeButton(action: {},
+                            includeArrow: false,
+                            imageView: Image(systemName: "brain.head.profile")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .foregroundColor(Color(red: 26/255, green: 138/255, blue: 158/255))
+                                .frame(width: 30),
+                            label: NSLocalizedString("LoopInsights", comment: "LoopInsights settings button"),
+                            descriptiveText: NSLocalizedString("AI-powered therapy settings analysis", comment: "LoopInsights settings descriptive text"))
+            }
         }
     }
 
