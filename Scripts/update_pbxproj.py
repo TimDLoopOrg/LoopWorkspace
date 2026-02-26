@@ -133,6 +133,25 @@ SOURCE_FILES = [
 
     # ── LoopInsights — Models ──
     ("Models/LoopInsights/LoopInsights_MealDebriefModels.swift",  "LoopInsights_MealDebriefModels.swift",  "Models/LoopInsights"),
+
+    # ── DataLayer — Managers ──
+    ("Managers/DataLayer/DataLayer_Coordinator.swift",             "DataLayer_Coordinator.swift",             "Managers/DataLayer"),
+
+    # ── DataLayer — Models ──
+    ("Models/DataLayer/DataLayer_EventModels.swift",               "DataLayer_EventModels.swift",             "Models/DataLayer"),
+    ("Models/DataLayer/DataLayer_ConsentModels.swift",             "DataLayer_ConsentModels.swift",           "Models/DataLayer"),
+
+    # ── DataLayer — Resources ──
+    ("Resources/DataLayer/DataLayer_FeatureFlags.swift",           "DataLayer_FeatureFlags.swift",            "Resources/DataLayer"),
+
+    # ── DataLayer — Services ──
+    ("Services/DataLayer/DataLayer_SecureStorage.swift",           "DataLayer_SecureStorage.swift",           "Services/DataLayer"),
+    ("Services/DataLayer/DataLayer_ConsentManager.swift",          "DataLayer_ConsentManager.swift",          "Services/DataLayer"),
+    ("Services/DataLayer/DataLayer_EventStore.swift",              "DataLayer_EventStore.swift",              "Services/DataLayer"),
+    ("Services/DataLayer/DataLayer_EventCollector.swift",          "DataLayer_EventCollector.swift",          "Services/DataLayer"),
+
+    # ── DataLayer — Views ──
+    ("Views/DataLayer/DataLayer_ConsentView.swift",                "DataLayer_ConsentView.swift",             "Views/DataLayer"),
 ]
 
 TEST_FILES = [
@@ -169,6 +188,13 @@ SUBGROUPS = [
     ("Resources/AutoPresets",   "AutoPresets",   "AutoPresets",   "Resources"),
     ("Resources/FoodFinder",    "FoodFinder",    "FoodFinder",    "Resources"),
     ("Resources/LoopInsights",  "LoopInsights",  "LoopInsights",  "Resources"),
+
+    # DataLayer subgroups
+    ("Managers/DataLayer",      "DataLayer",     "DataLayer",     "Managers"),
+    ("Models/DataLayer",        "DataLayer",     "DataLayer",     "Models"),
+    ("Resources/DataLayer",     "DataLayer",     "DataLayer",     "Resources"),
+    ("Services/DataLayer",      "DataLayer",     "DataLayer",     "Services"),
+    ("Views/DataLayer",         "DataLayer",     "DataLayer",     "Views"),
 
     # Test subgroups
     ("LoopTests/FoodFinder",    "FoodFinder",    "FoodFinder",    "LoopTests"),

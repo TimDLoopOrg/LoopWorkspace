@@ -149,6 +149,25 @@ NEW_FILES=(
     # LoopInsights — Models
     "Loop/Models/LoopInsights/LoopInsights_MealDebriefModels.swift"
 
+    # DataLayer — Managers
+    "Loop/Managers/DataLayer/DataLayer_Coordinator.swift"
+
+    # DataLayer — Models
+    "Loop/Models/DataLayer/DataLayer_EventModels.swift"
+    "Loop/Models/DataLayer/DataLayer_ConsentModels.swift"
+
+    # DataLayer — Resources
+    "Loop/Resources/DataLayer/DataLayer_FeatureFlags.swift"
+
+    # DataLayer — Services
+    "Loop/Services/DataLayer/DataLayer_SecureStorage.swift"
+    "Loop/Services/DataLayer/DataLayer_ConsentManager.swift"
+    "Loop/Services/DataLayer/DataLayer_EventStore.swift"
+    "Loop/Services/DataLayer/DataLayer_EventCollector.swift"
+
+    # DataLayer — Views
+    "Loop/Views/DataLayer/DataLayer_ConsentView.swift"
+
     # FoodFinder — Tests
     "LoopTests/FoodFinder/FoodFinder_BarcodeScannerTests.swift"
     "LoopTests/FoodFinder/FoodFinder_OpenFoodFactsTests.swift"
