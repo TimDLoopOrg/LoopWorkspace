@@ -187,6 +187,7 @@ SUBGROUPS = [
 
     # Services and Resources are new top-level groups under Loop root
     ("Services",                "Services",      "Services",      "Loop"),
+    ("Services/AutoPresets",    "AutoPresets",   "AutoPresets",   "Services"),
     ("Services/FoodFinder",     "FoodFinder",    "FoodFinder",    "Services"),
     ("Services/LoopInsights",   "LoopInsights",  "LoopInsights",  "Services"),
     ("Resources",               "Resources",     "Resources",     "Loop"),
