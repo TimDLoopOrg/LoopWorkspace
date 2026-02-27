@@ -50,6 +50,10 @@ NEW_FILES=(
 
     # AutoPresets — Models
     "Loop/Models/AutoPresets/AutoPresets_Models.swift"
+    "Loop/Models/AutoPresets/AutoPresets_RecommendationModels.swift"
+
+    # AutoPresets — Services
+    "Loop/Services/AutoPresets/AutoPresets_AIAdvisor.swift"
 
     # FoodFinder — Models
     "Loop/Models/FoodFinder/FoodFinder_AnalysisRecord.swift"
@@ -115,6 +119,7 @@ NEW_FILES=(
     "Loop/View Models/LoopInsights/LoopInsights_MealInsightsViewModel.swift"
 
     # AutoPresets — Views
+    "Loop/Views/AutoPresets/AutoPresets_AIRecommendationView.swift"
     "Loop/Views/AutoPresets/AutoPresets_SettingsView.swift"
 
     # AutoPresets — Resources
@@ -653,6 +658,15 @@ extension LoopDataManager: AutoPresets_Delegate {
 
         mutateSettings { settings in
             settings.scheduleOverride = nil
+        }
+    }
+
+    func autoPresets(_ coordinator: AutoPresets_Coordinator,
+                     shouldCreatePreset preset: TemporaryScheduleOverridePreset) {
+        logger.default("AutoPresets creating AI-recommended preset: %{public}@", preset.name)
+
+        mutateSettings { settings in
+            settings.overridePresets.append(preset)
         }
     }
 

@@ -35,11 +35,16 @@ SOURCE_FILES = [
 
     # ── AutoPresets — Models ──
     ("Models/AutoPresets/AutoPresets_Models.swift",                    "AutoPresets_Models.swift",                  "Models/AutoPresets"),
+    ("Models/AutoPresets/AutoPresets_RecommendationModels.swift",      "AutoPresets_RecommendationModels.swift",    "Models/AutoPresets"),
+
+    # ── AutoPresets — Services ──
+    ("Services/AutoPresets/AutoPresets_AIAdvisor.swift",               "AutoPresets_AIAdvisor.swift",               "Services/AutoPresets"),
 
     # ── AutoPresets — Resources ──
     ("Resources/AutoPresets/AutoPresets_FeatureFlags.swift",           "AutoPresets_FeatureFlags.swift",            "Resources/AutoPresets"),
 
     # ── AutoPresets — Views ──
+    ("Views/AutoPresets/AutoPresets_AIRecommendationView.swift",      "AutoPresets_AIRecommendationView.swift",    "Views/AutoPresets"),
     ("Views/AutoPresets/AutoPresets_SettingsView.swift",               "AutoPresets_SettingsView.swift",            "Views/AutoPresets"),
 
     # ── FoodFinder — Models ──
