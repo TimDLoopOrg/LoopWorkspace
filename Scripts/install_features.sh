@@ -76,6 +76,7 @@ NEW_FILES=(
     "Loop/Resources/LoopInsights/TestData/tidepool_therapy_settings.json"
 
     # FoodFinder — Services
+    "Loop/Services/FoodFinder/FoodFinder_CarbTrackingService.swift"
     "Loop/Services/FoodFinder/FoodFinder_AIAnalysis.swift"
     "Loop/Services/FoodFinder/FoodFinder_AIProviderConfig.swift"
     "Loop/Services/FoodFinder/FoodFinder_AIServiceAdapter.swift"
@@ -126,6 +127,7 @@ NEW_FILES=(
     "Loop/Resources/AutoPresets/AutoPresets_FeatureFlags.swift"
 
     # FoodFinder — Views
+    "Loop/Views/FoodFinder/FoodFinder_CarbTrackingDashboard.swift"
     "Loop/Views/FoodFinder/FoodFinder_AICameraView.swift"
     "Loop/Views/FoodFinder/FoodFinder_EntryPoint.swift"
     "Loop/Views/FoodFinder/FoodFinder_FavoritesHelpers.swift"

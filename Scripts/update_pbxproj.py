@@ -56,6 +56,7 @@ SOURCE_FILES = [
     ("Resources/FoodFinder/FoodFinder_FeatureFlags.swift",  "FoodFinder_FeatureFlags.swift",     "Resources/FoodFinder"),
 
     # ── FoodFinder — Services ──
+    ("Services/FoodFinder/FoodFinder_CarbTrackingService.swift", "FoodFinder_CarbTrackingService.swift", "Services/FoodFinder"),
     ("Services/FoodFinder/FoodFinder_AIAnalysis.swift",        "FoodFinder_AIAnalysis.swift",        "Services/FoodFinder"),
     ("Services/FoodFinder/FoodFinder_AIProviderConfig.swift",  "FoodFinder_AIProviderConfig.swift",  "Services/FoodFinder"),
     ("Services/FoodFinder/FoodFinder_AIServiceAdapter.swift",  "FoodFinder_AIServiceAdapter.swift",  "Services/FoodFinder"),
@@ -75,6 +76,7 @@ SOURCE_FILES = [
     ("View Models/FoodFinder/FoodFinder_SearchViewModel.swift", "FoodFinder_SearchViewModel.swift",  "View Models/FoodFinder"),
 
     # ── FoodFinder — Views ──
+    ("Views/FoodFinder/FoodFinder_CarbTrackingDashboard.swift", "FoodFinder_CarbTrackingDashboard.swift", "Views/FoodFinder"),
     ("Views/FoodFinder/FoodFinder_AICameraView.swift",      "FoodFinder_AICameraView.swift",      "Views/FoodFinder"),
     ("Views/FoodFinder/FoodFinder_EntryPoint.swift",        "FoodFinder_EntryPoint.swift",        "Views/FoodFinder"),
     ("Views/FoodFinder/FoodFinder_FavoritesHelpers.swift",  "FoodFinder_FavoritesHelpers.swift",  "Views/FoodFinder"),
