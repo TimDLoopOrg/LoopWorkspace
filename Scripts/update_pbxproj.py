@@ -159,9 +159,11 @@ SOURCE_FILES = [
     ("Services/DataLayer/DataLayer_ConsentManager.swift",          "DataLayer_ConsentManager.swift",          "Services/DataLayer"),
     ("Services/DataLayer/DataLayer_EventStore.swift",              "DataLayer_EventStore.swift",              "Services/DataLayer"),
     ("Services/DataLayer/DataLayer_EventCollector.swift",          "DataLayer_EventCollector.swift",          "Services/DataLayer"),
+    ("Services/DataLayer/DataLayer_SyncService.swift",             "DataLayer_SyncService.swift",             "Services/DataLayer"),
 
     # ── DataLayer — Views ──
     ("Views/DataLayer/DataLayer_ConsentView.swift",                "DataLayer_ConsentView.swift",             "Views/DataLayer"),
+    ("Views/DataLayer/DataLayer_DashboardView.swift",              "DataLayer_DashboardView.swift",           "Views/DataLayer"),
 ]
 
 TEST_FILES = [

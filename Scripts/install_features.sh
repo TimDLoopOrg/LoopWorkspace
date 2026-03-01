@@ -174,9 +174,11 @@ NEW_FILES=(
     "Loop/Services/DataLayer/DataLayer_ConsentManager.swift"
     "Loop/Services/DataLayer/DataLayer_EventStore.swift"
     "Loop/Services/DataLayer/DataLayer_EventCollector.swift"
+    "Loop/Services/DataLayer/DataLayer_SyncService.swift"
 
     # DataLayer — Views
     "Loop/Views/DataLayer/DataLayer_ConsentView.swift"
+    "Loop/Views/DataLayer/DataLayer_DashboardView.swift"
 
     # FoodFinder — Tests
     "LoopTests/FoodFinder/FoodFinder_BarcodeScannerTests.swift"
