@@ -30,6 +30,7 @@ SOURCE_FILES = [
     ("Managers/AutoPresets/AutoPresets_ActivityDetectionManager.swift", "AutoPresets_ActivityDetectionManager.swift", "Managers/AutoPresets"),
     ("Managers/AutoPresets/AutoPresets_Coordinator.swift",             "AutoPresets_Coordinator.swift",             "Managers/AutoPresets"),
     ("Managers/AutoPresets/AutoPresets_Delegate.swift",                "AutoPresets_Delegate.swift",                "Managers/AutoPresets"),
+    ("Managers/AutoPresets/AutoPresets_GeofenceManager.swift",         "AutoPresets_GeofenceManager.swift",         "Managers/AutoPresets"),
     ("Managers/AutoPresets/AutoPresets_Logger.swift",                  "AutoPresets_Logger.swift",                  "Managers/AutoPresets"),
     ("Managers/AutoPresets/AutoPresets_Storage.swift",                 "AutoPresets_Storage.swift",                 "Managers/AutoPresets"),
 
@@ -45,6 +46,7 @@ SOURCE_FILES = [
 
     # ── AutoPresets — Views ──
     ("Views/AutoPresets/AutoPresets_AIRecommendationView.swift",      "AutoPresets_AIRecommendationView.swift",    "Views/AutoPresets"),
+    ("Views/AutoPresets/AutoPresets_GeofenceSettingsView.swift",       "AutoPresets_GeofenceSettingsView.swift",    "Views/AutoPresets"),
     ("Views/AutoPresets/AutoPresets_SettingsView.swift",               "AutoPresets_SettingsView.swift",            "Views/AutoPresets"),
 
     # ── FoodFinder — Models ──
