@@ -49,6 +49,7 @@ NEW_FILES=(
     "Loop/Managers/AutoPresets/AutoPresets_Coordinator.swift"
     "Loop/Managers/AutoPresets/AutoPresets_Delegate.swift"
     "Loop/Managers/AutoPresets/AutoPresets_GeofenceManager.swift"
+    "Loop/Managers/AutoPresets/AutoPresets_CalendarManager.swift"
     "Loop/Managers/AutoPresets/AutoPresets_Logger.swift"
     "Loop/Managers/AutoPresets/AutoPresets_Storage.swift"
 
@@ -136,6 +137,7 @@ NEW_FILES=(
     # AutoPresets — Views
     "Loop/Views/AutoPresets/AutoPresets_AIRecommendationView.swift"
     "Loop/Views/AutoPresets/AutoPresets_GeofenceSettingsView.swift"
+    "Loop/Views/AutoPresets/AutoPresets_CalendarSettingsView.swift"
     "Loop/Views/AutoPresets/AutoPresets_SettingsView.swift"
 
     # AutoPresets — Resources
