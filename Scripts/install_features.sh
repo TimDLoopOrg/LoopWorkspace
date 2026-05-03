@@ -875,6 +875,8 @@ replace_app_icon() {
 
     # Replace icons in all asset catalogs that have AppIcon.appiconset
     for iconset_dir in \
+        "OverrideAssetsLoop.xcassets/AppIcon.appiconset" \
+        "OverrideAssetsWatchApp.xcassets/AppIcon.appiconset" \
         "Loop/Loop/DerivedAssets.xcassets/AppIcon.appiconset" \
         "Loop/Loop/DerivedAssetsBase.xcassets/AppIcon.appiconset" \
         "Loop/WatchApp/DerivedAssets.xcassets/AppIcon.appiconset" \
