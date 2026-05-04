@@ -1024,41 +1024,26 @@ patch_loopkit() {
         warn "TherapySettingsView.swift not found at: $(pwd)/$therapy_file"
     fi
 
-    # 1. Add TherapyHelpDestination to Environment+Dismiss.swift (if not already present)
-    if ! grep -q "TherapyHelpDestination" "$dismiss_file"; then
+    # 1. Add TherapyHelpRegistry to Environment+Dismiss.swift (if not already present)
+    if ! grep -q "TherapyHelpRegistry" "$dismiss_file"; then
         cat >> "$dismiss_file" << 'LOOPKIT_EOF'
 
-// MARK: - Therapy Help Destination
+// MARK: - Therapy Help Registry
 
-public struct TherapyHelpDestination {
-    public let view: AnyView?
-
-    public init(_ view: AnyView? = nil) {
-        self.view = view
-    }
-
-    public static let empty = TherapyHelpDestination()
-}
-
-private struct TherapyHelpDestinationKey: EnvironmentKey {
-    static let defaultValue = TherapyHelpDestination.empty
-}
-
-extension EnvironmentValues {
-    public var therapyHelpDestination: TherapyHelpDestination {
-        get { self[TherapyHelpDestinationKey.self] }
-        set { self[TherapyHelpDestinationKey.self] = newValue }
-    }
+/// Static registry so Loop can inject a "Get help" destination without environment propagation.
+/// Set `TherapyHelpRegistry.destination` once at app startup; TherapySettingsView reads it directly.
+public final class TherapyHelpRegistry {
+    public static var destination: AnyView? = nil
 }
 LOOPKIT_EOF
-        success "Added TherapyHelpDestination to Environment+Dismiss.swift"
+        success "Added TherapyHelpRegistry to Environment+Dismiss.swift"
     else
-        info "TherapyHelpDestination already present — skipping"
+        info "TherapyHelpRegistry already present — skipping"
     fi
 
-    # 2. Patch Loop's SettingsView to inject therapyHelpDestination
+    # 2. Patch Loop's SettingsView to register therapy help on appear
     local settings_file="Loop/Loop/Views/SettingsView.swift"
-    if [[ -f "$settings_file" ]] && ! grep -q "therapyHelpDestination" "$settings_file"; then
+    if [[ -f "$settings_file" ]] && ! grep -q "TherapyHelpRegistry" "$settings_file"; then
         python3 - "$settings_file" << 'PYEOF'
 import sys
 
@@ -1066,25 +1051,24 @@ filepath = sys.argv[1]
 with open(filepath, 'r') as f:
     content = f.read()
 
-# Add .environment(\.therapyHelpDestination, ...) after .environment(\.insulinTintColor, ...)
-# No feature flag check — Option B always has all features installed
+# Add .onAppear { TherapyHelpRegistry.destination = ... } after .environment(\.insulinTintColor, ...)
 old_line = '.environment(\\.insulinTintColor, self.insulinTintColor)'
 new_block = old_line + '''
-        .environment(\\.therapyHelpDestination,
-                     TherapyHelpDestination(AnyView(LoopInsights_SettingsView(dataStoresProvider: viewModel.loopInsightsDataStores)))
-        )'''
+        .onAppear {
+            TherapyHelpRegistry.destination = AnyView(LoopInsights_SettingsView(dataStoresProvider: viewModel.loopInsightsDataStores))
+        }'''
 
 if old_line in content:
     content = content.replace(old_line, new_block, 1)
     with open(filepath, 'w') as f:
         f.write(content)
-    print("OK: Injected therapyHelpDestination into SettingsView")
+    print("OK: Injected TherapyHelpRegistry into SettingsView")
 else:
     print("FAIL: insulinTintColor line not found in SettingsView")
     sys.exit(1)
 PYEOF
         if [[ $? -eq 0 ]]; then
-            success "Patched SettingsView.swift with therapy help injection"
+            success "Patched SettingsView.swift with therapy help registry"
         else
             warn "Failed to patch SettingsView.swift therapy help"
         fi
@@ -1092,8 +1076,8 @@ PYEOF
         info "SettingsView therapy help already patched — skipping"
     fi
 
-    # 3. Patch TherapySettingsView to use the environment key
-    if [[ -f "$therapy_file" ]] && ! grep -q "therapyHelpDestination" "$therapy_file"; then
+    # 3. Patch TherapySettingsView to use the static registry
+    if [[ -f "$therapy_file" ]] && ! grep -q "TherapyHelpRegistry" "$therapy_file"; then
         python3 - "$therapy_file" << 'PYEOF'
 import sys
 
@@ -1101,16 +1085,7 @@ filepath = sys.argv[1]
 with open(filepath, 'r') as f:
     content = f.read()
 
-# Add environment property after @Environment(\.appName)
-old_env = '@Environment(\\.appName) private var appName'
-new_env = old_env + '\n    @Environment(\\.therapyHelpDestination) private var therapyHelpDestination'
-if old_env in content:
-    content = content.replace(old_env, new_env)
-    print("  appName environment property: injected OK")
-else:
-    print("  WARNING: appName environment not found — may already be patched")
-
-# Replace the supportSection to check for injected destination
+# Replace the supportSection to check TherapyHelpRegistry.destination
 old_support = '''    private var supportSection: some View {
         Section {
             NavigationLink(destination: DemoPlaceHolderView(appName: appName)) {
@@ -1127,7 +1102,7 @@ old_support = '''    private var supportSection: some View {
 
 new_support = '''    private var supportSection: some View {
         Section {
-            if let destination = therapyHelpDestination.view {
+            if let destination = TherapyHelpRegistry.destination {
                 NavigationLink(destination: destination) {
                     HStack {
                         Text("Get help with Therapy Settings", comment: "Support button for Therapy Settings")
@@ -1154,10 +1129,9 @@ if old_support in content:
     content = content.replace(old_support, new_support)
     with open(filepath, 'w') as f:
         f.write(content)
-    print("OK: supportSection replaced")
+    print("OK: supportSection replaced with TherapyHelpRegistry check")
 else:
     print("FAIL: supportSection pattern not found in file")
-    # Show what's actually around supportSection for debugging
     idx = content.find("private var supportSection")
     if idx >= 0:
         print(f"  Found 'supportSection' at offset {idx}")
