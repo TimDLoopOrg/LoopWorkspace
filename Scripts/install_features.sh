@@ -1015,8 +1015,13 @@ patch_loopkit() {
     local therapy_file="LoopKit/LoopKitUI/Views/Settings Editors/TherapySettingsView.swift"
 
     if [[ ! -f "$dismiss_file" ]]; then
-        warn "Environment+Dismiss.swift not found — skipping LoopKit patch"
+        warn "Environment+Dismiss.swift not found at: $(pwd)/$dismiss_file"
+        warn "Skipping LoopKit patch"
         return
+    fi
+
+    if [[ ! -f "$therapy_file" ]]; then
+        warn "TherapySettingsView.swift not found at: $(pwd)/$therapy_file"
     fi
 
     # 1. Add TherapyHelpDestination to Environment+Dismiss.swift (if not already present)
@@ -1062,12 +1067,11 @@ with open(filepath, 'r') as f:
     content = f.read()
 
 # Add .environment(\.therapyHelpDestination, ...) after .environment(\.insulinTintColor, ...)
+# No feature flag check — Option B always has all features installed
 old_line = '.environment(\\.insulinTintColor, self.insulinTintColor)'
 new_block = old_line + '''
         .environment(\\.therapyHelpDestination,
-                     LoopInsights_FeatureFlags.isEnabled
-                        ? TherapyHelpDestination(AnyView(LoopInsights_SettingsView(dataStoresProvider: viewModel.loopInsightsDataStores)))
-                        : .empty
+                     TherapyHelpDestination(AnyView(LoopInsights_SettingsView(dataStoresProvider: viewModel.loopInsightsDataStores)))
         )'''
 
 if old_line in content:
@@ -1076,7 +1080,8 @@ if old_line in content:
         f.write(content)
     print("OK: Injected therapyHelpDestination into SettingsView")
 else:
-    print("SKIP: insulinTintColor line not found")
+    print("FAIL: insulinTintColor line not found in SettingsView")
+    sys.exit(1)
 PYEOF
         if [[ $? -eq 0 ]]; then
             success "Patched SettingsView.swift with therapy help injection"
@@ -1099,7 +1104,11 @@ with open(filepath, 'r') as f:
 # Add environment property after @Environment(\.appName)
 old_env = '@Environment(\\.appName) private var appName'
 new_env = old_env + '\n    @Environment(\\.therapyHelpDestination) private var therapyHelpDestination'
-content = content.replace(old_env, new_env)
+if old_env in content:
+    content = content.replace(old_env, new_env)
+    print("  appName environment property: injected OK")
+else:
+    print("  WARNING: appName environment not found — may already be patched")
 
 # Replace the supportSection to check for injected destination
 old_support = '''    private var supportSection: some View {
@@ -1145,9 +1154,17 @@ if old_support in content:
     content = content.replace(old_support, new_support)
     with open(filepath, 'w') as f:
         f.write(content)
-    print("OK")
+    print("OK: supportSection replaced")
 else:
-    print("SKIP: supportSection pattern not found (may already be patched)")
+    print("FAIL: supportSection pattern not found in file")
+    # Show what's actually around supportSection for debugging
+    idx = content.find("private var supportSection")
+    if idx >= 0:
+        print(f"  Found 'supportSection' at offset {idx}")
+        print(f"  Context: {repr(content[idx:idx+120])}")
+    else:
+        print("  'supportSection' not found anywhere in file!")
+    sys.exit(1)
 PYEOF
         if [[ $? -eq 0 ]]; then
             success "Patched TherapySettingsView.swift for therapy help"
