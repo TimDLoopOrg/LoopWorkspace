@@ -265,13 +265,21 @@ NEW_FILES=(
 PATCH_FILES=(
     "Loop/View Controllers/StatusTableViewController.swift"
     "Loop/View Models/AddEditFavoriteFoodViewModel.swift"
-    "Loop/View Models/BolusEntryViewModel.swift"
     "Loop/View Models/CarbEntryViewModel.swift"
     "Loop/View Models/SettingsViewModel.swift"
     "Loop/Views/AddEditFavoriteFoodView.swift"
     "Loop/Views/CarbEntryView.swift"
     "Loop/Views/FavoriteFoodDetailView.swift"
     "Loop/Views/FavoriteFoodsView.swift"
+)
+
+# Files that should be wholesale-replaced from feat/AllFeatures rather than
+# patched via 3-way merge. Used when the patch is small + isolated to our
+# features and L&L customizations don't touch the file. More robust than
+# 3-way merge in environments where line endings, whitespace, or context
+# drift cause `git apply --3way` to fail.
+OVERRIDE_FILES=(
+    "Loop/View Models/BolusEntryViewModel.swift"
 )
 
 # ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -575,6 +583,37 @@ IMGEOF
 
     rm -f "$tmp_front" "$tmp_back"
     popd > /dev/null
+}
+
+# ─── Phase 4d: Override Files (wholesale checkout) ────────────────────────────
+
+override_modified_files() {
+    if [[ ${#OVERRIDE_FILES[@]} -eq 0 ]]; then
+        return
+    fi
+    header "Phase 4d: Replacing ${#OVERRIDE_FILES[@]} files wholesale from feat/AllFeatures"
+
+    pushd Loop > /dev/null
+
+    local replaced=0
+    local failed=0
+
+    for file in "${OVERRIDE_FILES[@]}"; do
+        if git checkout "${FEATURE_REMOTE}/${FEATURE_LOOP_BRANCH}" -- "$file" 2>/dev/null; then
+            success "Replaced: $file"
+            ((replaced++))
+        else
+            warn "Could not replace: $file"
+            ((failed++))
+        fi
+    done
+
+    popd > /dev/null
+
+    info "Replaced: $replaced, Failed: $failed"
+    if [[ $failed -gt 0 ]]; then
+        die "Some override files could not be replaced — install aborted."
+    fi
 }
 
 # ─── Phase 5: Patch Modified Files ───────────────────────────────────────────
@@ -1373,6 +1412,7 @@ main() {
     bump_version
     install_new_files
     install_body_map_assets
+    override_modified_files
     patch_modified_files
     patch_settings_view
     patch_loop_data_manager
