@@ -147,6 +147,28 @@ NEW_FILES=(
     # AutoPresets — Resources
     "Loop/Resources/AutoPresets/AutoPresets_FeatureFlags.swift"
 
+    # BolusPro — Documentation
+    "Documentation/BolusPro/BolusPro_README.md"
+    "Documentation/BolusPro/BolusPro_DEVELOPER.md"
+
+    # BolusPro — Models
+    "Loop/Models/BolusPro/BolusPro_Models.swift"
+
+    # BolusPro — Resources
+    "Loop/Resources/BolusPro/BolusPro_FeatureFlags.swift"
+
+    # BolusPro — Services
+    "Loop/Services/BolusPro/BolusPro_FPUCalculator.swift"
+    "Loop/Services/BolusPro/BolusPro_DataLayerHook.swift"
+    "Loop/Services/BolusPro/BolusPro_BehaviorAnalyzer.swift"
+
+    # BolusPro — Views
+    "Loop/Views/BolusPro/BolusPro_InfoSheet.swift"
+    "Loop/Views/BolusPro/BolusPro_OnboardingView.swift"
+    "Loop/Views/BolusPro/BolusPro_ManualMacroFields.swift"
+    "Loop/Views/BolusPro/BolusPro_CarbEntrySection.swift"
+    "Loop/Views/BolusPro/BolusPro_SettingsView.swift"
+
     # GraphDetailView — Views
     "Loop/Views/GraphDetailView.swift"
 
@@ -243,6 +265,7 @@ NEW_FILES=(
 PATCH_FILES=(
     "Loop/View Controllers/StatusTableViewController.swift"
     "Loop/View Models/AddEditFavoriteFoodViewModel.swift"
+    "Loop/View Models/BolusEntryViewModel.swift"
     "Loop/View Models/CarbEntryViewModel.swift"
     "Loop/View Models/SettingsViewModel.swift"
     "Loop/Views/AddEditFavoriteFoodView.swift"
@@ -641,6 +664,8 @@ FEATURE_ROWS = """
                 )
             }
 
+            bolusProSettingsRow
+
             foodFinderSettingsRow
 
             loopInsightsSection
@@ -669,6 +694,19 @@ print(f"  Inserted {len(feature_lines)} lines after Therapy Settings (line {anch
 # ─── Anchor 2: Insert computed properties BEFORE "private var cgmChoices:" ───
 
 COMPUTED_PROPS = """
+    // BolusPro — single settings insertion point
+    private var bolusProSettingsRow: some View {
+        NavigationLink(destination: BolusPro_SettingsView()) {
+            LargeButton(action: {},
+                        includeArrow: false,
+                        imageView: Image(systemName: "drop.halffull")
+                            .foregroundColor(Color(red: 230/255, green: 188/255, blue: 60/255))
+                            .font(.system(size: 36)),
+                        label: NSLocalizedString("BolusPro", comment: "Title text for button to BolusPro Settings"),
+                        descriptiveText: NSLocalizedString("Protein & fat-aware bolusing for long absorption meals", comment: "Descriptive text for BolusPro Settings"))
+        }
+    }
+
     // FoodFinder — single settings insertion point
     private var foodFinderSettingsRow: some View {
         NavigationLink(destination: AISettingsView()) {

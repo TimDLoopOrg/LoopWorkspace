@@ -49,6 +49,24 @@ SOURCE_FILES = [
     # ── AutoPresets — Resources ──
     ("Resources/AutoPresets/AutoPresets_FeatureFlags.swift",           "AutoPresets_FeatureFlags.swift",            "Resources/AutoPresets"),
 
+    # ── BolusPro — Models ──
+    ("Models/BolusPro/BolusPro_Models.swift",                          "BolusPro_Models.swift",                     "Models/BolusPro"),
+
+    # ── BolusPro — Resources ──
+    ("Resources/BolusPro/BolusPro_FeatureFlags.swift",                 "BolusPro_FeatureFlags.swift",               "Resources/BolusPro"),
+
+    # ── BolusPro — Services ──
+    ("Services/BolusPro/BolusPro_FPUCalculator.swift",                 "BolusPro_FPUCalculator.swift",              "Services/BolusPro"),
+    ("Services/BolusPro/BolusPro_DataLayerHook.swift",                 "BolusPro_DataLayerHook.swift",              "Services/BolusPro"),
+    ("Services/BolusPro/BolusPro_BehaviorAnalyzer.swift",              "BolusPro_BehaviorAnalyzer.swift",           "Services/BolusPro"),
+
+    # ── BolusPro — Views ──
+    ("Views/BolusPro/BolusPro_InfoSheet.swift",                        "BolusPro_InfoSheet.swift",                  "Views/BolusPro"),
+    ("Views/BolusPro/BolusPro_OnboardingView.swift",                   "BolusPro_OnboardingView.swift",             "Views/BolusPro"),
+    ("Views/BolusPro/BolusPro_ManualMacroFields.swift",                "BolusPro_ManualMacroFields.swift",          "Views/BolusPro"),
+    ("Views/BolusPro/BolusPro_CarbEntrySection.swift",                 "BolusPro_CarbEntrySection.swift",           "Views/BolusPro"),
+    ("Views/BolusPro/BolusPro_SettingsView.swift",                     "BolusPro_SettingsView.swift",               "Views/BolusPro"),
+
     # ── AutoPresets — Views ──
     ("Views/AutoPresets/AutoPresets_AIRecommendationView.swift",      "AutoPresets_AIRecommendationView.swift",    "Views/AutoPresets"),
     ("Views/AutoPresets/AutoPresets_GeofenceSettingsView.swift",       "AutoPresets_GeofenceSettingsView.swift",    "Views/AutoPresets"),
