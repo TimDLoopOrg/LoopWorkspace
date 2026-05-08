@@ -264,6 +264,12 @@ SUBGROUPS = [
     ("Services/SiteAtlas",      "SiteAtlas",     "SiteAtlas",     "Services"),
     ("Views/SiteAtlas",         "SiteAtlas",     "SiteAtlas",     "Views"),
 
+    # BolusPro subgroups
+    ("Models/BolusPro",         "BolusPro",      "BolusPro",      "Models"),
+    ("Resources/BolusPro",      "BolusPro",      "BolusPro",      "Resources"),
+    ("Services/BolusPro",       "BolusPro",      "BolusPro",      "Services"),
+    ("Views/BolusPro",          "BolusPro",      "BolusPro",      "Views"),
+
     # Test subgroups
     ("LoopTests/FoodFinder",    "FoodFinder",    "FoodFinder",    "LoopTests"),
     ("LoopTests/LoopInsights",  "LoopInsights",  "LoopInsights",  "LoopTests"),
