@@ -4,7 +4,7 @@
 
 ---
 
-## The short version
+## TLDR;
 
 Loop (AID) PowerPack is built with substantial help from an AI coding assistant. We say so in every file header. We think agentic AI development is the right way to rapidly ship the kinds of features our users want, in a domain where every month of delay is a month of less-flat glucose.
 
