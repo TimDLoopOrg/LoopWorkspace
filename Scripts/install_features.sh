@@ -59,31 +59,32 @@ die()     { error "$@"; exit 1; }
 # Feature ids in display order. Easy four first, then the heavy two.
 ALL_FEATURE_IDS=(autopresets bolus_pro graph_detail_view site_atlas food_finder loop_insights)
 
-declare -A FEATURE_NAME=(
-    [autopresets]="AutoPresets"
-    [bolus_pro]="BolusPro"
-    [graph_detail_view]="GraphDetailView"
-    [site_atlas]="SiteAtlas"
-    [food_finder]="FoodFinder"
-    [loop_insights]="LoopInsights"
-)
-declare -A FEATURE_DESC=(
-    [autopresets]="Auto-activate Loop overrides on detected motion"
-    [bolus_pro]="Protein/fat-aware bolusing for high-FPU meals"
-    [graph_detail_view]="Long-press chart for detailed timestamp data"
-    [site_atlas]="Body-map tracker for pump/CGM site rotation"
-    [food_finder]="AI-assisted carb counting from photos/barcodes"
-    [loop_insights]="AI therapy tuning, Behavior Insights, DataLayer"
-)
-# Map id → upstream feature branch (for fetching source).
-declare -A FEATURE_BRANCH=(
-    [autopresets]="feat/AutoPresets"
-    [bolus_pro]="feat/BolusPro"
-    [graph_detail_view]="feat/GraphDetailView"
-    [site_atlas]="feat/SiteAtlas"
-    [food_finder]="feat/FoodFinder"
-    [loop_insights]="feat/LoopInsights"
-)
+# Feature display name + description lookups.
+# Written as case-statement functions because macOS ships bash 3.2 (no
+# associative-array support); `declare -A` would silently fail and trigger
+# "unbound variable" under `set -u` when looking up `${FOO[bar]}`.
+feature_name() {
+    case "$1" in
+        autopresets)        echo "AutoPresets" ;;
+        bolus_pro)          echo "BolusPro" ;;
+        graph_detail_view)  echo "GraphDetailView" ;;
+        site_atlas)         echo "SiteAtlas" ;;
+        food_finder)        echo "FoodFinder" ;;
+        loop_insights)      echo "LoopInsights" ;;
+        *)                  echo "$1" ;;
+    esac
+}
+feature_desc() {
+    case "$1" in
+        autopresets)        echo "Auto-activate Loop overrides on detected motion" ;;
+        bolus_pro)          echo "Protein/fat-aware bolusing for high-FPU meals" ;;
+        graph_detail_view)  echo "Long-press chart for detailed timestamp data" ;;
+        site_atlas)         echo "Body-map tracker for pump/CGM site rotation" ;;
+        food_finder)        echo "AI-assisted carb counting from photos/barcodes" ;;
+        loop_insights)      echo "AI therapy tuning, Behavior Insights, DataLayer" ;;
+        *)                  echo "" ;;
+    esac
+}
 
 marker_path_for() { echo "Loop/.feature_installed_$1"; }
 is_installed()    { [[ -f "$(marker_path_for "$1")" ]]; }
@@ -390,7 +391,7 @@ copy_files_for_feature() {
         fi
     done < <(files_for "$fid")
     popd > /dev/null
-    info "Copied ${n} files for ${FEATURE_NAME[$fid]} (${fail} failed)"
+    info "Copied ${n} files for $(feature_name "$fid") (${fail} failed)"
 }
 
 delete_files_for_feature() {
@@ -407,7 +408,7 @@ delete_files_for_feature() {
     # Prune empty subdirs
     eval "for d in $(empty_dirs_for "$fid"); do rmdir \"\$d\" 2>/dev/null || true; done"
     popd > /dev/null
-    info "Removed ${n} files for ${FEATURE_NAME[$fid]}"
+    info "Removed ${n} files for $(feature_name "$fid")"
 }
 
 # Install SiteAtlas body-map PNGs as imagesets in DerivedAssetsBase.xcassets
@@ -992,18 +993,18 @@ PYEOF
 # ─────────────────────────────────────────────────────────────────────────────
 
 install_autopresets() {
-    header "Installing ${FEATURE_NAME[autopresets]}"
+    header "Installing $(feature_name autopresets)"
     is_installed autopresets && { info "Already installed — skipping."; return; }
     copy_files_for_feature autopresets
     insert_settings_view_for_autopresets
     insert_loop_data_manager_for_autopresets
     pbxproj_add_feature autopresets
     write_marker autopresets
-    success "${FEATURE_NAME[autopresets]} installed."
+    success "$(feature_name autopresets) installed."
 }
 
 install_bolus_pro() {
-    header "Installing ${FEATURE_NAME[bolus_pro]}"
+    header "Installing $(feature_name bolus_pro)"
     is_installed bolus_pro && { info "Already installed — skipping."; return; }
     copy_files_for_feature bolus_pro
     insert_settings_view_for_bolus_pro
@@ -1011,11 +1012,11 @@ install_bolus_pro() {
     insert_bolus_entry_viewmodel_for_bolus_pro
     pbxproj_add_feature bolus_pro
     write_marker bolus_pro
-    success "${FEATURE_NAME[bolus_pro]} installed."
+    success "$(feature_name bolus_pro) installed."
 }
 
 install_graph_detail_view() {
-    header "Installing ${FEATURE_NAME[graph_detail_view]}"
+    header "Installing $(feature_name graph_detail_view)"
     is_installed graph_detail_view && { info "Already installed — skipping."; return; }
     copy_files_for_feature graph_detail_view
     # StatusTableViewController gets a sizable block. The per-feature branch
@@ -1031,11 +1032,11 @@ install_graph_detail_view() {
     popd > /dev/null
     pbxproj_add_feature graph_detail_view
     write_marker graph_detail_view
-    success "${FEATURE_NAME[graph_detail_view]} installed."
+    success "$(feature_name graph_detail_view) installed."
 }
 
 install_site_atlas() {
-    header "Installing ${FEATURE_NAME[site_atlas]}"
+    header "Installing $(feature_name site_atlas)"
     is_installed site_atlas && { info "Already installed — skipping."; return; }
     copy_files_for_feature site_atlas
     install_site_atlas_assets
@@ -1044,11 +1045,11 @@ install_site_atlas() {
     insert_device_data_manager_for_site_atlas
     pbxproj_add_feature site_atlas
     write_marker site_atlas
-    success "${FEATURE_NAME[site_atlas]} installed."
+    success "$(feature_name site_atlas) installed."
 }
 
 install_food_finder() {
-    header "Installing ${FEATURE_NAME[food_finder]}"
+    header "Installing $(feature_name food_finder)"
     is_installed food_finder && { info "Already installed — skipping."; return; }
     copy_files_for_feature food_finder
     insert_settings_view_for_food_finder
@@ -1061,12 +1062,12 @@ install_food_finder() {
     popd > /dev/null
     pbxproj_add_feature food_finder
     write_marker food_finder
-    success "${FEATURE_NAME[food_finder]} installed."
+    success "$(feature_name food_finder) installed."
     info "  → Configure your AI provider + API key in Settings → FoodFinder Settings."
 }
 
 install_loop_insights() {
-    header "Installing ${FEATURE_NAME[loop_insights]}"
+    header "Installing $(feature_name loop_insights)"
     is_installed loop_insights && { info "Already installed — skipping."; return; }
     copy_files_for_feature loop_insights
     insert_settings_view_for_loop_insights
@@ -1074,7 +1075,7 @@ install_loop_insights() {
     patch_loopkit_for_loop_insights
     pbxproj_add_feature loop_insights
     write_marker loop_insights
-    success "${FEATURE_NAME[loop_insights]} installed."
+    success "$(feature_name loop_insights) installed."
     info "  → Configure your AI provider + API key in Settings → LoopInsights → Settings."
     info "  → DataLayer is OFF by default. Opt in via Settings → LoopInsights → Data Sharing."
 }
@@ -1096,18 +1097,18 @@ install_one() {
 # ─────────────────────────────────────────────────────────────────────────────
 
 uninstall_autopresets() {
-    header "Uninstalling ${FEATURE_NAME[autopresets]}"
+    header "Uninstalling $(feature_name autopresets)"
     is_installed autopresets || { info "Not installed — nothing to do."; return; }
     remove_anchor_block "Loop/Loop/Views/SettingsView.swift" "AutoPresets"
     remove_anchor_block "Loop/Loop/Managers/LoopDataManager.swift" "AutoPresets"
     pbxproj_remove_feature autopresets
     delete_files_for_feature autopresets
     remove_marker autopresets
-    success "${FEATURE_NAME[autopresets]} uninstalled."
+    success "$(feature_name autopresets) uninstalled."
 }
 
 uninstall_bolus_pro() {
-    header "Uninstalling ${FEATURE_NAME[bolus_pro]}"
+    header "Uninstalling $(feature_name bolus_pro)"
     is_installed bolus_pro || { info "Not installed — nothing to do."; return; }
     remove_anchor_block "Loop/Loop/Views/SettingsView.swift" "BolusPro"
     remove_anchor_block "Loop/Loop/Views/CarbEntryView.swift" "BolusPro"
@@ -1115,11 +1116,11 @@ uninstall_bolus_pro() {
     pbxproj_remove_feature bolus_pro
     delete_files_for_feature bolus_pro
     remove_marker bolus_pro
-    success "${FEATURE_NAME[bolus_pro]} uninstalled."
+    success "$(feature_name bolus_pro) uninstalled."
 }
 
 uninstall_graph_detail_view() {
-    header "Uninstalling ${FEATURE_NAME[graph_detail_view]}"
+    header "Uninstalling $(feature_name graph_detail_view)"
     is_installed graph_detail_view || { info "Not installed — nothing to do."; return; }
     pushd Loop > /dev/null
     # Restore StatusTableViewController to its dev-branch state.
@@ -1131,11 +1132,11 @@ uninstall_graph_detail_view() {
     pbxproj_remove_feature graph_detail_view
     delete_files_for_feature graph_detail_view
     remove_marker graph_detail_view
-    success "${FEATURE_NAME[graph_detail_view]} uninstalled."
+    success "$(feature_name graph_detail_view) uninstalled."
 }
 
 uninstall_site_atlas() {
-    header "Uninstalling ${FEATURE_NAME[site_atlas]}"
+    header "Uninstalling $(feature_name site_atlas)"
     is_installed site_atlas || { info "Not installed — nothing to do."; return; }
     remove_anchor_block "Loop/Loop/Views/SettingsView.swift" "SiteAtlas"
     remove_anchor_block "Loop/Loop/Managers/LoopDataManager.swift" "SiteAtlas"
@@ -1144,11 +1145,11 @@ uninstall_site_atlas() {
     pbxproj_remove_feature site_atlas
     delete_files_for_feature site_atlas
     remove_marker site_atlas
-    success "${FEATURE_NAME[site_atlas]} uninstalled."
+    success "$(feature_name site_atlas) uninstalled."
 }
 
 uninstall_food_finder() {
-    header "Uninstalling ${FEATURE_NAME[food_finder]}"
+    header "Uninstalling $(feature_name food_finder)"
     is_installed food_finder || { info "Not installed — nothing to do."; return; }
     remove_anchor_block "Loop/Loop/Views/SettingsView.swift" "FoodFinder"
     remove_anchor_block "Loop/Loop/Views/CarbEntryView.swift" "FoodFinder"
@@ -1159,18 +1160,18 @@ uninstall_food_finder() {
     pbxproj_remove_feature food_finder
     delete_files_for_feature food_finder
     remove_marker food_finder
-    success "${FEATURE_NAME[food_finder]} uninstalled."
+    success "$(feature_name food_finder) uninstalled."
 }
 
 uninstall_loop_insights() {
-    header "Uninstalling ${FEATURE_NAME[loop_insights]}"
+    header "Uninstalling $(feature_name loop_insights)"
     is_installed loop_insights || { info "Not installed — nothing to do."; return; }
     remove_anchor_block "Loop/Loop/Views/SettingsView.swift" "LoopInsights"
     unpatch_loopkit_for_loop_insights
     pbxproj_remove_feature loop_insights
     delete_files_for_feature loop_insights
     remove_marker loop_insights
-    success "${FEATURE_NAME[loop_insights]} uninstalled."
+    success "$(feature_name loop_insights) uninstalled."
 }
 
 uninstall_one() {
@@ -1206,9 +1207,9 @@ show_install_menu() {
     local i=1
     for fid in "${ALL_FEATURE_IDS[@]}"; do
         if is_installed "$fid"; then
-            printf "    %d. %-18s ${GREEN}✓ installed${NC}\n" "$i" "${FEATURE_NAME[$fid]}"
+            printf "    %d. %-18s ${GREEN}✓ installed${NC}\n" "$i" "$(feature_name "$fid")"
         else
-            printf "    %d. %-18s ${DIM}— %s${NC}\n" "$i" "${FEATURE_NAME[$fid]}" "${FEATURE_DESC[$fid]}"
+            printf "    %d. %-18s ${DIM}— %s${NC}\n" "$i" "$(feature_name "$fid")" "$(feature_desc "$fid")"
         fi
         ((i++))
     done
@@ -1230,7 +1231,7 @@ show_uninstall_menu() {
     local installed_ids=()
     for fid in "${ALL_FEATURE_IDS[@]}"; do
         if is_installed "$fid"; then
-            printf "    %d. %s\n" "$i" "${FEATURE_NAME[$fid]}"
+            printf "    %d. %s\n" "$i" "$(feature_name "$fid")"
             installed_ids+=("$fid")
             ((i++))
         fi
