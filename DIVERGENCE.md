@@ -127,15 +127,16 @@ Plus shared infrastructure:
 - Per-feature install/uninstall scripts so users can adopt one feature
   at a time
 
-## What PowerPack does NOT pull from upstream
+## What PowerPack tracks from upstream
 
-PowerPack tracks `LoopKit/Loop:main` (not `dev`) for stability. Anything
-that lands on `dev` but not `main` is **not** in PowerPack until it
-ships in an upstream release.
+PowerPack tracks `LoopKit/Loop:dev` — the active upstream mainline.
+LoopKit/Loop's `main` branch is no longer maintained (last commit
+April 2025; confirmed by LoopKit maintainer Marion Barker). `dev` is
+where new pump/CGM driver work, bug fixes, and feature work land.
 
 PowerPack does not currently ship:
 - Any **experimental upstream feature flags** that are off by default
-  in upstream `main` (they may be available but PowerPack doesn't
+  in upstream `dev` (they may be available but PowerPack doesn't
   pre-enable them)
 - Any **Loop & Learn (L&L) customizations** by default. The Option B
   installer respects L&L patches that were applied before PowerPack
@@ -145,10 +146,10 @@ PowerPack does not currently ship:
 
 | Trigger | Action |
 |---|---|
-| Upstream `main` security/critical fix | Merged within 7 days |
-| Upstream `main` pump/CGM driver update | Merged within 14 days |
-| Routine upstream `main` activity | Merged on a weekly automated probe (`upstream-probe.yml` GitHub Action). Conflict-free merges are pushed automatically; conflicts open an issue for manual resolution |
-| Upstream `dev` activity | Not pulled. PowerPack waits for changes to land on `main` |
+| Upstream `dev` security/critical fix | Merged within 7 days |
+| Upstream `dev` pump/CGM driver update | Merged within 14 days |
+| Routine upstream `dev` activity | Merged on a weekly automated probe (`upstream-probe.yml` GitHub Action). Conflict-free merges are pushed automatically; conflicts open an issue for manual resolution |
+| Upstream `main` activity | Not pulled. The branch is dormant. |
 
 Merge events are visible in the commit history of `feat/AllFeatures`
 and posted to the project's GitHub Discussions.
