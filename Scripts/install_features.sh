@@ -245,9 +245,27 @@ NEW_FILES=(
     "Loop/Views/DataLayer/DataLayer_ConsentView.swift"
     "Loop/Views/DataLayer/DataLayer_DashboardView.swift"
 
-    # SiteAtlas — Documentation
-    "Documentation/SiteAtlas/Developer.md"
-    "Documentation/SiteAtlas/User.md"
+    # AutoPresets — Documentation
+    "Documentation/AutoPresets/AutoPresets_README.md"
+    "Documentation/AutoPresets/AutoPresets_DEVELOPER.md"
+
+    # FoodFinder — Documentation (DEVELOPER added in Batch 3)
+    "Documentation/FoodFinder/FoodFinder_DEVELOPER.md"
+
+    # LoopInsights — Documentation (DEVELOPER added in Batch 3)
+    "Documentation/LoopInsights/LoopInsights_DEVELOPER.md"
+
+    # DataLayer — Documentation (new in Batch 3)
+    "Documentation/DataLayer/DataLayer_README.md"
+    "Documentation/DataLayer/DataLayer_DEVELOPER.md"
+
+    # GraphDetailView — Documentation (new in Batch 3)
+    "Documentation/GraphDetailView/GraphDetailView_README.md"
+    "Documentation/GraphDetailView/GraphDetailView_DEVELOPER.md"
+
+    # SiteAtlas — Documentation (renamed in Batch 3)
+    "Documentation/SiteAtlas/SiteAtlas_DEVELOPER.md"
+    "Documentation/SiteAtlas/SiteAtlas_README.md"
 
     # SiteAtlas — Models
     "Loop/Models/SiteAtlas/SiteAtlas_Models.swift"
@@ -1456,13 +1474,19 @@ rollback() {
     # Clean up empty directories
     local feature_dirs=(
         "Loop/Views/FoodFinder" "Loop/Views/LoopInsights" "Loop/Views/AutoPresets"
+        "Loop/Views/BolusPro" "Loop/Views/SiteAtlas" "Loop/Views/DataLayer"
         "Loop/Models/FoodFinder" "Loop/Models/LoopInsights" "Loop/Models/AutoPresets"
+        "Loop/Models/BolusPro" "Loop/Models/SiteAtlas" "Loop/Models/DataLayer"
         "Loop/Services/FoodFinder" "Loop/Services/LoopInsights"
+        "Loop/Services/AutoPresets" "Loop/Services/BolusPro" "Loop/Services/SiteAtlas" "Loop/Services/DataLayer"
         "Loop/Resources/FoodFinder" "Loop/Resources/LoopInsights/TestData" "Loop/Resources/LoopInsights" "Loop/Resources/AutoPresets"
-        "Loop/Managers/LoopInsights" "Loop/Managers/AutoPresets"
+        "Loop/Resources/BolusPro" "Loop/Resources/DataLayer"
+        "Loop/Managers/LoopInsights" "Loop/Managers/AutoPresets" "Loop/Managers/DataLayer"
         "Loop/View Models/FoodFinder" "Loop/View Models/LoopInsights"
         "LoopTests/FoodFinder" "LoopTests/LoopInsights"
         "Documentation/FoodFinder" "Documentation/LoopInsights"
+        "Documentation/AutoPresets" "Documentation/BolusPro" "Documentation/SiteAtlas"
+        "Documentation/DataLayer" "Documentation/GraphDetailView"
         "Loop/Services" "Loop/Resources"
     )
     for dir in "${feature_dirs[@]}"; do
