@@ -1,6 +1,6 @@
 # DIVERGENCE — Loop (AID) PowerPack vs upstream LoopKit/Loop
 
-> A short, honest description of what this fork does that upstream Loop
+> A short description of what this fork does that upstream Loop
 > doesn't, what upstream does that this fork explicitly doesn't pull,
 > how often we sync with upstream, and where to file feedback.
 
