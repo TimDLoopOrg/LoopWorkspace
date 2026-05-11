@@ -1,23 +1,24 @@
 #!/usr/bin/env bash
-# install_features.sh — Loop (AID) PowerPack installer
+# install_features.sh — Loop (AID) PowerPack installer (all-or-nothing bundle)
 #
 # FULL FLOW
-#   Loop core + (optional) L&L customizations + PowerPack features + build.
+#   Loop core + (optional) L&L customizations + PowerPack bundle + build.
 #   Run with no args, anywhere, and the installer walks you through it.
 #
+# WHAT GETS INSTALLED
+#   Every PowerPack feature, in one shot. Individual features can't be
+#   installed in isolation because they share compile-time symbols. After
+#   install, each feature defaults to OFF — turn the ones you want on in
+#   Loop → Settings.
+#
+#   Bundle contents:
+#     AutoPresets, BolusPro, FoodFinder, LoopInsights, DataLayer,
+#     GraphDetailView, SiteAtlas.
+#
 # USAGE
-#   ./Scripts/install_features.sh                     interactive (default)
-#   ./Scripts/install_features.sh --all               install every PowerPack feature non-interactively
-#   ./Scripts/install_features.sh --rollback          uninstall every installed PowerPack feature
-#   ./Scripts/install_features.sh --feature <id>      install one feature non-interactively
-#   ./Scripts/install_features.sh --uninstall <id>    uninstall one feature non-interactively
-#
-# FEATURE IDS
-#   site_atlas, ai_suite
-#
-#   `ai_suite` bundles AutoPresets + BolusPro + FoodFinder + LoopInsights
-#   + DataLayer + GraphDetailView (they share compile-time symbols and
-#   install together). Only SiteAtlas is genuinely standalone.
+#   ./Scripts/install_features.sh                  interactive (default)
+#   ./Scripts/install_features.sh --install        install non-interactively
+#   ./Scripts/install_features.sh --rollback       uninstall non-interactively
 #
 # ONE-LINER (anywhere — installer detects whether you're in a LoopWorkspace):
 #   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/LoopPowerPack/LoopWorkspace/feat/installer/Scripts/install_features.sh)"
@@ -1260,126 +1261,105 @@ ai_suite_any_installed() {
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
-# 12. INTERACTIVE MENU
+# 12. POWERPACK BUNDLE INSTALL / UNINSTALL
+#
+# PowerPack is shipped as a single all-or-nothing bundle:
+#   SiteAtlas + AI Suite (AutoPresets, BolusPro, FoodFinder, LoopInsights,
+#   DataLayer, GraphDetailView).
+# Individual install/uninstall isn't supported because the AI features
+# share compile-time symbols. Users who don't want a feature can disable
+# its master toggle in Loop → Settings after install (every feature
+# defaults to OFF anyway — GraphDetailView is the only always-on one,
+# and it's a passive UI affordance with no algorithm side effects).
 # ─────────────────────────────────────────────────────────────────────────────
 
-show_powerpack_menu() {
+show_install_splash() {
     clear 2>/dev/null || true
     echo -e "${BOLD}╔══════════════════════════════════════════════════════════╗${NC}"
-    echo -e "${BOLD}║  Loop (AID) PowerPack — Feature Menu                     ║${NC}"
+    echo -e "${BOLD}║  Loop (AID) PowerPack — Bundle Install                   ║${NC}"
     echo -e "${BOLD}╚══════════════════════════════════════════════════════════╝${NC}"
     echo
-    echo -e "  ${BOLD}Pick a feature to install:${NC}"
+    echo "  About to install Loop (AID) PowerPack into:"
+    echo "    $(pwd)"
     echo
-
-    local sa_state suite_state
-    if is_installed site_atlas; then
-        sa_state="${GREEN}✓ installed${NC}"
-    else
-        sa_state="${DIM}— Body-map tracker for pump/CGM site rotation${NC}"
-    fi
-    if ai_suite_installed; then
-        suite_state="${GREEN}✓ installed${NC}"
-    elif ai_suite_any_installed; then
-        suite_state="${YELLOW}⚠ partially installed${NC}"
-    else
-        suite_state="${DIM}— AutoPresets + BolusPro + FoodFinder + LoopInsights + DataLayer + GraphDetailView${NC}"
-    fi
-
-    printf "    1. %-22s %b\n" "SiteAtlas"           "$sa_state"
-    printf "    2. %-22s %b\n" "AI PowerPack Suite"  "$suite_state"
-    echo "                                (These features share code and install together)"
+    echo "  This bundle adds these features (each is OFF by default; turn"
+    echo "  them on individually in Loop → Settings after building):"
     echo
-    echo -e "    ${BOLD}A${NC}. Install ALL (SiteAtlas + AI Suite)"
-    echo -e "    ${BOLD}U${NC}. Uninstall a feature"
-    echo -e "    ${BOLD}R${NC}. Uninstall ALL (rollback)"
-    echo -e "    ${BOLD}Q${NC}. Quit"
+    echo "    • AutoPresets       — auto-activate overrides on detected motion"
+    echo "    • BolusPro          — protein/fat-aware bolusing for high-FPU meals"
+    echo "    • FoodFinder        — AI-assisted carb counting (BYO API key)"
+    echo "    • LoopInsights      — AI therapy tuning + Behavior Insights"
+    echo "    • DataLayer         — local event store with opt-in cloud upload"
+    echo "    • GraphDetailView   — long-press home chart for timestamp detail"
+    echo "    • SiteAtlas         — body-map tracker for pump/CGM rotation"
     echo
 }
 
-show_uninstall_menu() {
+show_uninstall_splash() {
     clear 2>/dev/null || true
     echo -e "${BOLD}╔══════════════════════════════════════════════════════════╗${NC}"
-    echo -e "${BOLD}║  Uninstall a Feature                                     ║${NC}"
+    echo -e "${BOLD}║  Loop (AID) PowerPack — Uninstall                        ║${NC}"
     echo -e "${BOLD}╚══════════════════════════════════════════════════════════╝${NC}"
     echo
+    echo "  About to remove every PowerPack feature from:"
+    echo "    $(pwd)"
+    echo
+    echo "  This reverts all PowerPack file additions and anchor-based"
+    echo "  modifications to Loop's source files. Your Loop install and"
+    echo "  any L&L customizations applied before PowerPack stay untouched."
+    echo
+}
 
-    # Build a flat list of uninstallable items: SiteAtlas, AI Suite.
-    local -a labels=()
-    local -a actions=()
-    if is_installed site_atlas; then
-        labels+=("SiteAtlas")
-        actions+=("uninstall_site_atlas")
-    fi
-    if ai_suite_any_installed; then
-        labels+=("AI PowerPack Suite (all 5 + GraphDetailView)")
-        actions+=("uninstall_ai_suite")
-    fi
+install_powerpack_bundle() {
+    show_install_splash
+    read -r -p "  Press Enter to install, or Ctrl-C to cancel..."
+    echo
+    install_site_atlas
+    install_ai_suite
+    cleanup_remote
+    farewell
+}
 
-    if [[ ${#labels[@]} -eq 0 ]]; then
-        echo "    (no PowerPack features currently installed)"
-        echo
-        read -r -p "    Press Enter to return to main menu..."
+uninstall_powerpack_bundle() {
+    show_uninstall_splash
+    read -r -p "  Type 'yes' to uninstall: " confirm
+    if [[ "$confirm" != "yes" ]]; then
+        echo "  Aborted."
         return
     fi
-
-    local i=1
-    for label in "${labels[@]}"; do
-        printf "    %d. %s\n" "$i" "$label"
-        ((i++))
-    done
     echo
-    echo -e "    ${BOLD}Q${NC}. Back to main menu"
+    is_installed site_atlas && uninstall_site_atlas
+    ai_suite_any_installed  && uninstall_ai_suite
+    rm -f "Loop/${LEGACY_MARKER}"
+    cleanup_remote
     echo
-    read -r -p "  Choose: " choice
-    case "$choice" in
-        Q|q|"") return ;;
-        [1-9])
-            local idx=$((choice - 1))
-            if [[ $idx -ge 0 && $idx -lt ${#actions[@]} ]]; then
-                "${actions[$idx]}"
-                read -r -p "  Press Enter to return to main menu..."
-            fi
-            ;;
-    esac
+    success "PowerPack uninstall complete. Loop is back to its prior state."
+    echo
 }
 
-powerpack_interactive_loop() {
-    while true; do
-        show_powerpack_menu
-        read -r -p "  Choose [1-2 / A / U / R / Q]: " choice
+# Dispatch entry for the in-LoopWorkspace flow.
+powerpack_dispatch() {
+    if ai_suite_any_installed || is_installed site_atlas; then
+        # Some PowerPack state is already on disk. Offer to uninstall or reinstall.
+        clear 2>/dev/null || true
+        echo -e "${BOLD}Loop (AID) PowerPack${NC}"
+        echo
+        echo "  PowerPack appears to already be installed in this LoopWorkspace."
+        echo
+        echo -e "    ${BOLD}1${NC}. Reinstall (uninstall first, then install fresh)"
+        echo -e "    ${BOLD}2${NC}. Uninstall PowerPack"
+        echo -e "    ${BOLD}Q${NC}. Quit"
+        echo
+        read -r -p "  Choose [1-2 / Q]: " choice
         case "$choice" in
-            1) install_site_atlas;        read -r -p "  Press Enter..." ;;
-            2) install_ai_suite;          read -r -p "  Press Enter..." ;;
-            A|a)
-                install_site_atlas
-                install_ai_suite
-                read -r -p "  All-features install complete. Press Enter..."
-                ;;
-            U|u)
-                show_uninstall_menu
-                ;;
-            R|r)
-                echo
-                read -r -p "  Uninstall ALL installed features? [y/N]: " confirm
-                if [[ "$confirm" == "y" || "$confirm" == "Y" ]]; then
-                    is_installed site_atlas        && uninstall_site_atlas
-                    ai_suite_any_installed         && uninstall_ai_suite
-                    rm -f "Loop/${LEGACY_MARKER}"
-                fi
-                read -r -p "  Press Enter to return to main menu..."
-                ;;
-            Q|q|"")
-                cleanup_remote
-                farewell
-                exit 0
-                ;;
-            *)
-                warn "Invalid choice: $choice"
-                sleep 1
-                ;;
+            1) uninstall_powerpack_bundle && install_powerpack_bundle ;;
+            2) uninstall_powerpack_bundle ;;
+            Q|q|"") exit 0 ;;
+            *) warn "Invalid choice"; sleep 1; powerpack_dispatch ;;
         esac
-    done
+    else
+        install_powerpack_bundle
+    fi
 }
 
 cleanup_remote() {
@@ -1472,7 +1452,7 @@ run_ll_bootstrap() {
     success "Found LoopWorkspace: $ws"
 
     init_common
-    powerpack_interactive_loop
+    powerpack_dispatch
 }
 
 run_locate_existing() {
@@ -1501,48 +1481,20 @@ bootstrap_dispatch() {
 # 14. CLI FLAG HANDLERS
 # ─────────────────────────────────────────────────────────────────────────────
 
-cli_install_all() {
+cli_install_bundle() {
+    # Non-interactive install of the full bundle. Skips the splash prompt.
     install_site_atlas
     install_ai_suite
     cleanup_remote
     farewell
 }
 
-cli_install_feature() {
-    case "$1" in
-        site_atlas)         install_site_atlas ;;
-        ai_suite|all|suite) install_ai_suite ;;
-        autopresets|bolus_pro|food_finder|loop_insights|graph_detail_view)
-            warn "'$1' belongs to the AI PowerPack Suite bundle (entangled with other features)."
-            warn "Installing the full bundle. Use --feature ai_suite for the same effect."
-            install_ai_suite
-            ;;
-        *) die "Unknown feature: $1" ;;
-    esac
-    cleanup_remote
-    echo; success "Feature install complete."
-}
-
-cli_uninstall_all() {
-    is_installed site_atlas        && uninstall_site_atlas
-    ai_suite_any_installed         && uninstall_ai_suite
+cli_uninstall_bundle() {
+    is_installed site_atlas && uninstall_site_atlas
+    ai_suite_any_installed  && uninstall_ai_suite
     rm -f "Loop/${LEGACY_MARKER}"
     cleanup_remote
-    echo; success "Rollback complete. All PowerPack features removed."
-}
-
-cli_uninstall_feature() {
-    case "$1" in
-        site_atlas)         uninstall_site_atlas ;;
-        ai_suite|all|suite) uninstall_ai_suite ;;
-        autopresets|bolus_pro|food_finder|loop_insights|graph_detail_view)
-            warn "'$1' belongs to the AI PowerPack Suite bundle. Uninstalling the whole bundle."
-            uninstall_ai_suite
-            ;;
-        *) die "Unknown feature: $1" ;;
-    esac
-    cleanup_remote
-    echo; success "Feature uninstall complete."
+    echo; success "PowerPack uninstall complete. Loop is back to its prior state."
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -1563,13 +1515,10 @@ init_common() {
 
 main() {
     local mode="interactive"
-    local feature=""
     while [[ $# -gt 0 ]]; do
         case "$1" in
-            --all)         mode="install_all"; shift ;;
-            --rollback)    mode="uninstall_all"; shift ;;
-            --feature)     mode="install_feature"; feature="$2"; shift 2 ;;
-            --uninstall)   mode="uninstall_feature"; feature="$2"; shift 2 ;;
+            --install|--all|-y) mode="install"; shift ;;
+            --rollback|--uninstall) mode="uninstall"; shift ;;
             -h|--help)
                 sed -n '2,20p' "${BASH_SOURCE[0]:-$0}" | sed 's|^# \?||'
                 exit 0
@@ -1584,15 +1533,13 @@ main() {
         interactive)
             if in_loopworkspace; then
                 init_common
-                powerpack_interactive_loop
+                powerpack_dispatch
             else
                 bootstrap_dispatch
             fi
             ;;
-        install_all)        init_common; cli_install_all ;;
-        install_feature)    init_common; cli_install_feature "$feature" ;;
-        uninstall_all)      init_common; cli_uninstall_all ;;
-        uninstall_feature)  init_common; cli_uninstall_feature "$feature" ;;
+        install)   init_common; cli_install_bundle ;;
+        uninstall) init_common; cli_uninstall_bundle ;;
     esac
 }
 
