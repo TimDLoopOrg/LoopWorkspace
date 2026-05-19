@@ -203,6 +203,8 @@ NEW_FILES=(
     "Loop/Views/LoopInsights/LoopInsights_BehaviorInsightsView.swift"
     "Loop/Views/LoopInsights/LoopInsights_CaregiverDigestView.swift"
     "Loop/Views/LoopInsights/LoopInsights_EndoReportView.swift"
+    "Loop/Views/LoopInsights/LoopInsights_SignalGapHistoryView.swift"
+    "Loop/Views/LoopInsights/LoopInsights_SubstackPromo.swift"
     "Loop/Views/LoopInsights/LoopInsights_ChatHistoryView.swift"
     "Loop/Views/LoopInsights/LoopInsights_CaffeineLogView.swift"
     "Loop/Views/LoopInsights/LoopInsights_ChatView.swift"

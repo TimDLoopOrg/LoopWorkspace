@@ -222,6 +222,8 @@ SOURCE_FILES: list[tuple[str, str, str, str]] = [
     ("Views/LoopInsights/LoopInsights_TrendsInsightsView.swift",   "LoopInsights_TrendsInsightsView.swift","Views/LoopInsights",    "loop_insights"),
     ("Views/LoopInsights/LoopInsights_MealDebriefCard.swift",      "LoopInsights_MealDebriefCard.swift",   "Views/LoopInsights",    "loop_insights"),
     ("Views/LoopInsights/LoopInsights_PreMealAdvisorCard.swift",   "LoopInsights_PreMealAdvisorCard.swift","Views/LoopInsights",    "loop_insights"),
+    ("Views/LoopInsights/LoopInsights_SignalGapHistoryView.swift", "LoopInsights_SignalGapHistoryView.swift","Views/LoopInsights",  "loop_insights"),
+    ("Views/LoopInsights/LoopInsights_SubstackPromo.swift",        "LoopInsights_SubstackPromo.swift",     "Views/LoopInsights",    "loop_insights"),
     ("Views/DataLayer/DataLayer_ConsentView.swift",                "DataLayer_ConsentView.swift",          "Views/DataLayer",       "loop_insights"),
     ("Views/DataLayer/DataLayer_DashboardView.swift",              "DataLayer_DashboardView.swift",        "Views/DataLayer",       "loop_insights"),
 
