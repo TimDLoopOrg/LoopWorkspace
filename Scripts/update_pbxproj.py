@@ -112,6 +112,7 @@ SOURCE_FILES: list[tuple[str, str, str, str]] = [
     ("Views/AutoPresets/AutoPresets_AIRecommendationView.swift",      "AutoPresets_AIRecommendationView.swift",    "Views/AutoPresets", "autopresets"),
     ("Views/AutoPresets/AutoPresets_GeofenceSettingsView.swift",       "AutoPresets_GeofenceSettingsView.swift",    "Views/AutoPresets", "autopresets"),
     ("Views/AutoPresets/AutoPresets_CalendarSettingsView.swift",      "AutoPresets_CalendarSettingsView.swift",    "Views/AutoPresets", "autopresets"),
+    ("Views/AutoPresets/AutoPresets_ScannedEventsView.swift",         "AutoPresets_ScannedEventsView.swift",       "Views/AutoPresets", "autopresets"),
     ("Views/AutoPresets/AutoPresets_SettingsView.swift",               "AutoPresets_SettingsView.swift",            "Views/AutoPresets", "autopresets"),
 
     # ── BolusPro ──
