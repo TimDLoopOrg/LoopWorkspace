@@ -166,6 +166,7 @@ NEW_FILES=(
     "Loop/Views/AutoPresets/AutoPresets_AIRecommendationView.swift"
     "Loop/Views/AutoPresets/AutoPresets_GeofenceSettingsView.swift"
     "Loop/Views/AutoPresets/AutoPresets_CalendarSettingsView.swift"
+    "Loop/Views/AutoPresets/AutoPresets_ScannedEventsView.swift"
     "Loop/Views/AutoPresets/AutoPresets_SettingsView.swift"
 
     # AutoPresets — Resources
