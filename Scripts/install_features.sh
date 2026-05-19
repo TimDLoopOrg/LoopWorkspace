@@ -674,6 +674,82 @@ patch_modified_files() {
     fi
 }
 
+# ─── Phase 5b: Patch Info.plist privacy usage descriptions ───────────────────
+# Upstream Loop's Info.plist only declares NSCameraUsageDescription (for
+# barcode scanning). FoodFinder, AutoPresets, and LoopInsights need
+# additional privacy keys — without them iOS hard-crashes with SIGABRT the
+# first time PHPhotoLibrary, the microphone, speech recognition, or
+# CoreLocation is touched. Without this patch, Option B installs crash on
+# the FoodFinder camera button (PHPhotoLibrary access for the recent-photo
+# thumbnail in the camera overlay).
+#
+# Pattern: add-if-missing. We never overwrite an existing value — that
+# protects any custom strings a user (or an L&L patch) may have set. Keys
+# we add are removed automatically by the rollback flow's `git checkout
+# HEAD -- .` since they were never committed.
+
+patch_info_plist() {
+    header "Phase 5b: Patching Loop Info.plist privacy keys"
+
+    local plist="Loop/Loop/Info.plist"
+    if [[ ! -f "$plist" ]]; then
+        die "Loop Info.plist not found at $plist"
+    fi
+
+    if ! plutil -lint "$plist" >/dev/null 2>&1; then
+        die "Info.plist failed plutil syntax check BEFORE patching — refusing to modify."
+    fi
+
+    PLIST_PATH="$plist" python3 - <<'PYEOF' || die "Info.plist patch failed."
+import os
+import plistlib
+import sys
+from pathlib import Path
+
+PLIST = Path(os.environ["PLIST_PATH"])
+
+KEYS = {
+    "NSPhotoLibraryUsageDescription":
+        "FoodFinder previews your most recent photo on the camera screen so you can pick a photo for analysis without leaving the capture view.",
+    "NSMicrophoneUsageDescription":
+        "FoodFinder uses the microphone for voice-powered food logging.",
+    "NSSpeechRecognitionUsageDescription":
+        "FoodFinder uses speech recognition to log meals by voice.",
+    "NSLocationWhenInUseUsageDescription":
+        "FoodFinder uses your location to tag meals with where you ate. AutoPresets uses location to activate presets when you arrive at or leave saved places like the gym.",
+    "NSLocationAlwaysAndWhenInUseUsageDescription":
+        "AutoPresets uses background location to monitor geofences and automatically activate presets when you arrive at or leave saved locations. This is battery-efficient and does not continuously track your position.",
+}
+
+with open(PLIST, "rb") as f:
+    data = plistlib.load(f)
+
+added, kept = [], []
+for key, value in KEYS.items():
+    if key in data:
+        kept.append(key)
+    else:
+        data[key] = value
+        added.append(key)
+
+with open(PLIST, "wb") as f:
+    plistlib.dump(data, f)
+
+for k in added:
+    print(f"  added:    {k}")
+for k in kept:
+    print(f"  kept:     {k} (already present, left unchanged)")
+
+print(f"summary:  {len(added)} added, {len(kept)} kept")
+PYEOF
+
+    if ! plutil -lint "$plist" >/dev/null 2>&1; then
+        die "Info.plist failed plutil syntax check AFTER patching — install aborted."
+    fi
+
+    success "Phase 5b complete: Info.plist privacy keys verified"
+}
+
 # ─── Phase 6: Patch SettingsView.swift (Anchor-Based) ────────────────────────
 
 patch_settings_view() {
@@ -1568,6 +1644,7 @@ do_install() {
     install_body_map_assets
     override_modified_files
     patch_modified_files
+    patch_info_plist
     patch_settings_view
     patch_bolus_entry_viewmodel
     patch_loop_data_manager
