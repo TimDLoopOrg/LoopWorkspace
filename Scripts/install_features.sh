@@ -37,9 +37,19 @@ FEATURE_REPO="https://github.com/LoopPowerPack/Loop.git"
 FEATURE_WORKSPACE_REPO="https://raw.githubusercontent.com/LoopPowerPack/LoopWorkspace/${FEATURE_BRANCH}"
 MARKER_FILE=".feature_install_marker"
 
-# Version to stamp after installation
+# Loop version to stamp into VersionOverride.xcconfig after installation.
+# Mirrors upstream Loop's marketing version + build number — affects what
+# iOS shows in Settings → General → iPhone Storage etc.
 FEATURE_VERSION="3.14.0"
 FEATURE_BUILD="58"
+
+# PowerPack-specific semver, distinct from Loop's version. Surfaced in the
+# in-app footer (LoopInsights dashboard + FoodFinder Settings) so users can
+# tell support which release of PowerPack they're running. Bump on
+# meaningful releases (new feature shipping, major bug fix, etc.) and tag
+# the corresponding commit on LoopPowerPack/Loop with the same value
+# (e.g., `git tag powerpack-0.2.0`) so version-to-commit lookups are easy.
+POWERPACK_VERSION="0.1.0"
 
 # Colors
 RED='\033[0;31m'
@@ -96,6 +106,7 @@ NEW_FILES=(
 
     # LoopInsights — Resources
     "Loop/Resources/LoopInsights/LoopInsights_FeatureFlags.swift"
+    "Loop/Resources/LoopInsights/PowerPack_BuildInfo.swift"
     "Loop/Resources/LoopInsights/TestData/tidepool_carb_entries.json"
     "Loop/Resources/LoopInsights/TestData/tidepool_dose_entries.json"
     "Loop/Resources/LoopInsights/TestData/tidepool_glucose_samples.json"
@@ -590,6 +601,48 @@ IMGEOF
 
     rm -f "$tmp_front" "$tmp_back"
     popd > /dev/null
+}
+
+# ─── Phase 4c: Stamp PowerPack build info ────────────────────────────────────
+# Rewrites Loop/Loop/Resources/LoopInsights/PowerPack_BuildInfo.swift to
+# replace the committed-default constants ("dev" / empty) with real
+# install-time values: the actual Loop submodule short SHA + today's UTC
+# date + POWERPACK_VERSION from this script.
+#
+# Effect: the in-app version footer flips from "PowerPack v0.1.0-dev" to
+# "PowerPack v0.1.0 (8bd0a85)" — the SHA maps directly to a commit on the
+# LoopPowerPack/Loop repo, so user-reported versions can be reproduced.
+#
+# Runs after Phase 4 (which copies the file into place) so we're patching
+# the just-copied file, not the source in our fetch-source remote.
+
+stamp_build_info() {
+    header "Phase 4c: Stamping PowerPack build info"
+
+    local build_info_file="Loop/Loop/Resources/LoopInsights/PowerPack_BuildInfo.swift"
+    if [[ ! -f "$build_info_file" ]]; then
+        warn "PowerPack_BuildInfo.swift not found at $build_info_file — install may be incomplete"
+        return 0
+    fi
+
+    pushd Loop > /dev/null
+    local commit_sha
+    commit_sha=$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")
+    popd > /dev/null
+
+    local build_date
+    build_date=$(date -u +%Y-%m-%d)
+
+    # Rewrite the three constants. `.bak` extension is required on macOS sed
+    # for in-place editing; we delete the backup immediately after.
+    sed -i.bak \
+        -e "s|static let version = \"[^\"]*\"|static let version = \"${POWERPACK_VERSION}\"|" \
+        -e "s|static let commitShortSHA = \"[^\"]*\"|static let commitShortSHA = \"${commit_sha}\"|" \
+        -e "s|static let buildDate = \"[^\"]*\"|static let buildDate = \"${build_date}\"|" \
+        "$build_info_file"
+    rm -f "${build_info_file}.bak"
+
+    success "Stamped PowerPack v${POWERPACK_VERSION} (${commit_sha}) built ${build_date}"
 }
 
 # ─── Phase 4d: Override Files (wholesale checkout) ────────────────────────────
@@ -1644,6 +1697,7 @@ do_install() {
     bump_version
     install_new_files
     install_body_map_assets
+    stamp_build_info
     override_modified_files
     patch_modified_files
     patch_info_plist
