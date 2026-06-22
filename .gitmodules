@@ -44,7 +44,7 @@
 	url = https://github.com/LoopKit/G7SensorKit.git
 [submodule "TidepoolService"]
 	path = TidepoolService
-	url = https://github.com/LoopKit/TidepoolService.git
+	url = https://github.com/taylorpatterson-T1D/TidepoolService.git
 [submodule "MinimedKit"]
 	path = MinimedKit
 	url = https://github.com/LoopKit/MinimedKit.git
